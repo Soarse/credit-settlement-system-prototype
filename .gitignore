@@ -1,0 +1,8 @@
+server.pid
+server.log
+server-error.log
+review-checks.latest.log
+review-results.json
+.DS_Store
+Thumbs.db
+

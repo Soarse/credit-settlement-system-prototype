@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>零售信贷资金方计费结算系统 · 模拟原型</title>
+  <link rel="stylesheet" href="assets/css/app.css?v=20260916.4">
+</head>
+<body>
+  <div id="app-shell">
+    <aside id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">结</div>
+        <div class="brand-text">
+          <div class="brand-title">资金方计费结算</div>
+          <div class="brand-sub">Settlement Mid-Platform</div>
+        </div>
+      </div>
+      <nav id="nav"></nav>
+      <div class="sidebar-foot">
+        <div class="sim-clock">
+          <span class="lbl">系统业务日</span>
+          <strong id="sim-date">—</strong>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="btn-reset" title="清空所有模拟操作，恢复初始数据">重置模拟数据</button>
+      </div>
+    </aside>
+
+    <div id="main">
+      <header id="topbar">
+        <div class="crumbs" id="crumbs"></div>
+        <div id="guide-top-controls" hidden aria-live="polite"></div>
+        <div class="topbar-right">
+          <label class="role-picker">
+            <span>当前操作人</span>
+            <select id="role-select"></select>
+          </label>
+          <button class="btn btn-sm guide-trigger" id="btn-guide" type="button" aria-pressed="false" title="开启或关闭全流程新手引导">? 新手引导</button>
+          <button class="btn btn-sm guide-trigger flow-guide-trigger" id="btn-flow-guide" type="button" aria-pressed="false" title="选择一个具体业务流程开始引导">☷ 流程引导</button>
+          <button class="icon-btn" id="btn-theme" title="切换明暗主题">◐</button>
+        </div>
+      </header>
+      <main id="view"></main>
+    </div>
+  </div>
+
+  <div id="toast-host"></div>
+  <div id="modal-host" hidden></div>
+  <div id="guide-root" hidden></div>
+  <div id="flow-guide-root" hidden></div>
+
+  <!-- 核心层 -->
+  <script src="assets/js/core.js"></script>
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/generator.js"></script>
+  <script src="assets/js/engine.js"></script>
+  <script src="assets/js/billing.js"></script>
+  <script src="assets/js/validate.js"></script>
+  <script src="assets/js/approval.js"></script>
+  <script src="assets/js/recon.js"></script>
+  <script src="assets/js/claim.js"></script>
+  <script src="assets/js/invoice.js"></script>
+  <script src="assets/js/payment.js"></script>
+  <script src="assets/js/dispute.js"></script>
+  <script src="assets/js/calendar.js"></script>
+  <script src="assets/js/replenish.js"></script>
+  <script src="assets/js/metrics.js"></script>
+  <script src="assets/js/preview.js"></script>
+  <script src="assets/js/store.js"></script>
+  <!-- UI 层 -->
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/views-master.js"></script>
+  <script src="assets/js/views-form.js"></script>
+  <script src="assets/js/views-onboard.js"></script>
+  <script src="assets/js/views-rule.js"></script>
+  <script src="assets/js/views-charge.js"></script>
+  <script src="assets/js/views-daily.js"></script>
+  <script src="assets/js/views-replenish.js"></script>
+  <script src="assets/js/views-bill.js"></script>
+  <script src="assets/js/views-preview.js"></script>
+  <script src="assets/js/views-invoice.js"></script>
+  <script src="assets/js/views-dispute.js"></script>
+  <script src="assets/js/views-calendar.js"></script>
+  <script src="assets/js/views-settle.js"></script>
+  <script src="assets/js/views-payment.js"></script>
+  <script src="assets/js/views-claim.js"></script>
+  <script src="assets/js/views-recon.js"></script>
+  <script src="assets/js/views-external.js"></script>
+  <script src="assets/js/views-metrics.js"></script>
+  <script src="assets/js/views-approval.js"></script>
+  <script src="assets/js/views-scenarios.js"></script>
+  <script src="assets/js/guide.js?v=20260916.4"></script>
+  <script src="assets/js/flow-guide.js?v=20260916.5"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
