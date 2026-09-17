@@ -253,7 +253,15 @@ body.guide-running #topbar { z-index: 10002; }
 .flow-stage-tab { padding: 5px 9px; border: 1px solid var(--border); border-radius: 16px; background: var(--bg-elev); color: var(--fg-muted); font-size: 10.5px; cursor: pointer; }
 .flow-stage-tab:hover { background: var(--bg-hover); color: var(--fg); }
 .flow-stage-tab.active { background: var(--purple-soft); border-color: color-mix(in srgb, var(--purple) 38%, var(--border)); color: var(--purple); font-weight: 700; }
+.flow-catalog-groups { display: flex; flex-direction: column; gap: 16px; }
+.flow-category-section { overflow: hidden; border: 1px solid var(--border); border-radius: 11px; background: var(--bg-sunken); }
+.flow-category-head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 11px 12px; border-bottom: 1px solid var(--border); background: color-mix(in srgb, var(--purple-soft) 58%, var(--bg-elev)); }
+.flow-category-index { display: inline-flex; align-items: center; justify-content: center; min-width: 48px; height: 24px; padding: 0 8px; border-radius: 12px; background: var(--purple); color: #fff; font-size: 10px; font-weight: 750; white-space: nowrap; }
+.flow-category-copy strong { display: block; color: var(--fg); font-size: 13px; line-height: 1.35; }
+.flow-category-copy p { margin: 2px 0 0; color: var(--fg-muted); font-size: 10.8px; line-height: 1.45; }
+.flow-category-count { color: var(--purple); font-size: 10.5px; font-weight: 700; white-space: nowrap; }
 .flow-catalog-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.flow-category-section .flow-catalog-grid { padding: 10px; }
 .flow-catalog-card { width: 100%; display: grid; grid-template-columns: 38px 1fr auto; gap: 10px; align-items: start; padding: 11px; border: 1px solid var(--border); border-radius: 9px; background: var(--bg-elev); color: var(--fg); text-align: left; cursor: pointer; }
 .flow-catalog-card:hover { border-color: color-mix(in srgb, var(--purple) 45%, var(--border)); background: var(--purple-soft); transform: translateY(-1px); }
 .flow-catalog-card.completed { border-color: color-mix(in srgb, var(--ok) 32%, var(--border)); }
@@ -273,6 +281,8 @@ body.guide-running #topbar { z-index: 10002; }
   .guide-top-nav { top: 52px; }
   .guide-top-nav .btn { min-width: 66px; padding-left: 8px; padding-right: 8px; }
   .flow-catalog-grid { grid-template-columns: 1fr; }
+  .flow-category-head { grid-template-columns: auto minmax(0, 1fr); }
+  .flow-category-count { grid-column: 2; }
   .flow-catalog-count { width: 100%; margin-left: 0; }
 }
 
