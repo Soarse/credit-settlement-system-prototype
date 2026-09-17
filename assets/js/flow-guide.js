@@ -8,6 +8,29 @@
   var root, trigger, topHost, activeFlow = null, stepIndex = 0, focusEl = null, resizeTimer = null;
   var STORAGE_PROGRESS = 'rcs.flowGuide.progress';
   var STORAGE_COMPLETED = 'rcs.flowGuide.completed';
+  var FLOW_CATEGORIES = [
+    { id: 'C1', short: '第一类 · 运营准入', name: '运营启程与准入建档',
+      description: '从每日运营优先级出发，完成新资金方接入、主体建档、账户复核和开票资料准备。',
+      flowIds: ['01', '02', '03', '04', '05'] },
+    { id: 'C2', short: '第二类 · 合同规则', name: '合同条款与规则生效',
+      description: '把商务协议转化为可执行、可验证、经过审批且按版本生效的计费规则。',
+      flowIds: ['06', '07', '08', '09'] },
+    { id: 'C3', short: '第三类 · 事件计费', name: '业务事件与计费核算',
+      description: '接收业务事件并治理数据质量，完成基数快照、费用计算、流水查询、冲正和重算。',
+      flowIds: ['10', '11', '12', '13', '14', '15', '16'] },
+    { id: 'C4', short: '第四类 · 账单发票', name: '账单确认与发票管理',
+      description: '从预账单检查和封账出账开始，完成账单确认、调整争议以及开票收票闭环。',
+      flowIds: ['17', '18', '19', '20', '21', '22'] },
+    { id: 'C5', short: '第五类 · 资金结算', name: '资金结算与收付执行',
+      description: '生成结算单并完成轧差与审批，按应付、应收方向执行付款、回单和收款认领。',
+      flowIds: ['23', '24', '25', '26', '27'] },
+    { id: 'C6', short: '第六类 · 对账风控', name: '对账风控与审计闭环',
+      description: '通过内部勾稽和外部对账识别差异，联动告警、追溯、审计和验收完成风险闭环。',
+      flowIds: ['28', '29', '30'] },
+    { id: 'C7', short: '第七类 · 综合演练', name: '跨模块综合演练',
+      description: '以完整月结和资损异常为主线，串联多个模块进行端到端实战。',
+      flowIds: ['X1', 'X2'] }
+  ];
 
   function step(title, route, target, business, operation, checkpoint) {
     return { title: title, route: route, target: target || '.page-head', business: business,
@@ -345,6 +368,16 @@
     ]
   });
 
+  FLOW_CATEGORIES.forEach(function (category, categoryIndex) {
+    category.flowIds.forEach(function (flowId) {
+      var flow = flows.find(function (item) { return item.id === flowId; });
+      if (!flow) return;
+      flow.categoryId = category.id;
+      flow.categoryName = category.name;
+      flow.categoryOrder = categoryIndex + 1;
+    });
+  });
+
   function readJSON(key, fallback) {
     try { return JSON.parse(localStorage.getItem(key) || '') || fallback; } catch (e) { return fallback; }
   }
@@ -388,52 +421,69 @@
     if (global.Guide && Guide.isActive()) Guide.stop(false, true);
     var progress = readJSON(STORAGE_PROGRESS, {});
     var completed = readJSON(STORAGE_COMPLETED, {});
-    var selectedStage = '全部';
+    var selectedCategory = '全部';
     var body = h('div', { class: 'flow-catalog' });
     var intro = h('div', { class: 'flow-catalog-intro' },
-      '选择一个流程后，系统会自动切换到对应页面并启动蒙版引导。每一步分别说明“业务流程”和“应用操作流程”。标准流程 30 个，另含 2 个跨模块综合演练。');
+      '全部流程按七类业务生命周期组织。建议从第一类依次学习；选择具体流程后，系统会自动切换页面并分别讲解“业务流程”和“应用操作流程”。');
     var search = h('input', { class: 'flow-catalog-search', type: 'search', placeholder: '搜索流程、模块或关键词', 'aria-label': '搜索流程' });
     var count = h('span', { class: 'flow-catalog-count' });
     var toolbar = h('div', { class: 'flow-catalog-toolbar' }, [search, count]);
-    var stageTabs = h('div', { class: 'flow-stage-tabs', role: 'tablist', 'aria-label': '流程阶段筛选' });
-    var grid = h('div', { class: 'flow-catalog-grid' });
-    body.appendChild(intro); body.appendChild(toolbar); body.appendChild(stageTabs); body.appendChild(grid);
+    var categoryTabs = h('div', { class: 'flow-stage-tabs', role: 'tablist', 'aria-label': '业务分类筛选' });
+    var groups = h('div', { class: 'flow-catalog-groups' });
+    body.appendChild(intro); body.appendChild(toolbar); body.appendChild(categoryTabs); body.appendChild(groups);
 
-    var stages = ['全部'].concat(flows.map(function (f) { return f.stage; }).filter(function (x, i, a) { return a.indexOf(x) === i; }));
     function draw() {
-      stageTabs.innerHTML = '';
-      stages.forEach(function (stage) {
-        stageTabs.appendChild(h('button', { class: 'flow-stage-tab' + (stage === selectedStage ? ' active' : ''), type: 'button',
-          role: 'tab', 'aria-selected': stage === selectedStage ? 'true' : 'false', onclick: function () { selectedStage = stage; draw(); } }, stage));
+      categoryTabs.innerHTML = '';
+      [{ id: '全部', short: '全部分类' }].concat(FLOW_CATEGORIES).forEach(function (category) {
+        categoryTabs.appendChild(h('button', { class: 'flow-stage-tab' + (category.id === selectedCategory ? ' active' : ''), type: 'button',
+          role: 'tab', 'aria-selected': category.id === selectedCategory ? 'true' : 'false',
+          onclick: function () { selectedCategory = category.id; draw(); } }, category.short));
       });
       var q = String(search.value || '').trim().toLowerCase();
       var shown = flows.filter(function (flow) {
-        if (selectedStage !== '全部' && flow.stage !== selectedStage) return false;
-        return !q || (flow.id + ' ' + flow.title + ' ' + flow.summary + ' ' + flow.modules.join(' ')).toLowerCase().indexOf(q) >= 0;
+        if (selectedCategory !== '全部' && flow.categoryId !== selectedCategory) return false;
+        return !q || (flow.id + ' ' + flow.title + ' ' + flow.summary + ' ' + flow.modules.join(' ') + ' ' + flow.categoryName).toLowerCase().indexOf(q) >= 0;
       });
-      count.textContent = '显示 ' + shown.length + ' / ' + flows.length + ' 个流程';
-      grid.innerHTML = '';
+      var visibleCategories = FLOW_CATEGORIES.filter(function (category) {
+        return shown.some(function (flow) { return flow.categoryId === category.id; });
+      });
+      count.textContent = '显示 ' + shown.length + ' / ' + flows.length + ' 个流程 · ' + visibleCategories.length + ' 个业务分类';
+      groups.innerHTML = '';
       if (!shown.length) {
-        grid.appendChild(h('div', { class: 'flow-catalog-empty' }, '没有匹配的流程，请更换关键词。'));
+        groups.appendChild(h('div', { class: 'flow-catalog-empty' }, '没有匹配的流程，请更换关键词或业务分类。'));
         return;
       }
-      shown.forEach(function (flow) {
-        var done = !!completed[flow.id], at = Number(progress[flow.id] || 0);
-        var action = done ? '重新学习' : (at > 0 ? '继续第 ' + (at + 1) + ' 步' : '开始引导');
-        grid.appendChild(h('button', { class: 'flow-catalog-card' + (done ? ' completed' : ''), type: 'button',
-          onclick: function () { start(flow.id, done ? 0 : at); } }, [
-          h('span', { class: 'flow-catalog-no' }, flow.id),
-          h('span', { class: 'flow-catalog-main' }, [
-            h('strong', null, flow.title), h('p', null, flow.summary),
-            h('span', { class: 'flow-catalog-modules' }, flow.modules.map(function (m) { return h('span', null, m); }))
+      visibleCategories.forEach(function (category, categoryIndex) {
+        var categoryFlows = shown.filter(function (flow) { return flow.categoryId === category.id; });
+        var section = h('section', { class: 'flow-category-section', 'aria-labelledby': 'flow-category-' + category.id });
+        var heading = h('div', { class: 'flow-category-head' }, [
+          h('span', { class: 'flow-category-index' }, category.short.split(' · ')[0]),
+          h('span', { class: 'flow-category-copy' }, [
+            h('strong', { id: 'flow-category-' + category.id }, category.name),
+            h('p', null, category.description)
           ]),
-          h('span', { class: 'flow-catalog-action' }, (done ? '✓ ' : '') + action + ' →')
-        ]));
+          h('span', { class: 'flow-category-count' }, categoryFlows.length + ' 个流程')
+        ]);
+        var grid = h('div', { class: 'flow-catalog-grid' });
+        categoryFlows.forEach(function (flow) {
+          var done = !!completed[flow.id], at = Number(progress[flow.id] || 0);
+          var action = done ? '重新学习' : (at > 0 ? '继续第 ' + (at + 1) + ' 步' : '开始引导');
+          grid.appendChild(h('button', { class: 'flow-catalog-card' + (done ? ' completed' : ''), type: 'button',
+            onclick: function () { start(flow.id, done ? 0 : at); } }, [
+            h('span', { class: 'flow-catalog-no' }, flow.id),
+            h('span', { class: 'flow-catalog-main' }, [
+              h('strong', null, flow.title), h('p', null, flow.summary),
+              h('span', { class: 'flow-catalog-modules' }, flow.modules.map(function (m) { return h('span', null, m); }))
+            ]),
+            h('span', { class: 'flow-catalog-action' }, (done ? '✓ ' : '') + action + ' →')
+          ]));
+        });
+        section.appendChild(heading); section.appendChild(grid); groups.appendChild(section);
       });
     }
     search.addEventListener('input', draw);
     draw();
-    UI.modal('流程引导 · 请选择要学习的具体流程', body,
+    UI.modal('流程引导 · 按业务分类选择流程', body,
       [h('button', { class: 'btn', type: 'button', onclick: UI.closeModal }, '关闭')], { size: 'wide' });
     setTimeout(function () { search.focus(); }, 0);
   }
@@ -595,6 +645,7 @@
   global.FlowGuide = {
     init: init, openCatalog: openCatalog, start: start, stop: stop,
     refresh: function () { setTimeout(refresh, 0); }, isActive: function () { return !!activeFlow; },
-    currentFlow: function () { return activeFlow; }, currentStep: function () { return stepIndex; }, flows: flows
+    currentFlow: function () { return activeFlow; }, currentStep: function () { return stepIndex; },
+    flows: flows, categories: FLOW_CATEGORIES
   };
 })(window);
