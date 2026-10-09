@@ -1,4 +1,5 @@
 server.pid
+server.port
 server.log
 server-error.log
 review-checks.latest.log

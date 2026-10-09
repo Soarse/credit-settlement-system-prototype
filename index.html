@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>零售信贷资金方计费结算系统 · 模拟原型</title>
-  <link rel="stylesheet" href="assets/css/app.css?v=20260917.1">
+  <title>信贷资方结算系统 · 模拟原型</title>
+  <link rel="stylesheet" href="assets/css/app.css?v=20261009.1">
 </head>
 <body>
   <div id="app-shell">
     <aside id="sidebar">
-      <div class="brand">
+      <div class="brand" title="信贷资方结算系统">
         <div class="brand-mark">结</div>
         <div class="brand-text">
-          <div class="brand-title">资金方计费结算</div>
+          <div class="brand-title">信贷资方结算系统</div>
           <div class="brand-sub">Settlement Mid-Platform</div>
         </div>
       </div>
@@ -22,13 +22,16 @@
           <span class="lbl">系统业务日</span>
           <strong id="sim-date">—</strong>
         </div>
-        <button class="btn btn-ghost btn-sm" id="btn-reset" title="清空所有模拟操作，恢复初始数据">重置模拟数据</button>
+        <button class="btn btn-ghost btn-sm" id="btn-reset" title="清空所有模拟操作，恢复初始数据" aria-label="重置模拟数据"><span class="reset-icon" aria-hidden="true">↺</span><span class="reset-label">重置模拟数据</span></button>
       </div>
     </aside>
 
     <div id="main">
       <header id="topbar">
-        <div class="crumbs" id="crumbs"></div>
+        <div class="topbar-left">
+          <button class="icon-btn sidebar-toggle" id="btn-sidebar-toggle" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="收起左侧功能栏" title="收起左侧功能栏"><span aria-hidden="true">‹</span></button>
+          <div class="crumbs" id="crumbs"></div>
+        </div>
         <div id="guide-top-controls" hidden aria-live="polite"></div>
         <div class="topbar-right">
           <label class="role-picker">
@@ -89,8 +92,8 @@
   <script src="assets/js/views-metrics.js"></script>
   <script src="assets/js/views-approval.js"></script>
   <script src="assets/js/views-scenarios.js"></script>
-  <script src="assets/js/guide.js?v=20260916.4"></script>
+  <script src="assets/js/guide.js?v=20261009.1"></script>
   <script src="assets/js/flow-guide.js?v=20260917.1"></script>
-  <script src="assets/js/app.js"></script>
+  <script src="assets/js/app.js?v=20261009.1"></script>
 </body>
 </html>

@@ -9,6 +9,20 @@
   var current = { name: 'dashboard', params: {} };
   var navTipAnchor = null;
 
+  function setSidebarCollapsed(collapsed) {
+    document.getElementById('app-shell').classList.toggle('sidebar-collapsed', collapsed);
+    var button = document.getElementById('btn-sidebar-toggle');
+    var label = collapsed ? '展开左侧功能栏' : '收起左侧功能栏';
+    button.setAttribute('aria-expanded', String(!collapsed));
+    button.setAttribute('aria-label', label);
+    button.title = label;
+    button.firstElementChild.textContent = collapsed ? '›' : '‹';
+    hideNavTip();
+    try { localStorage.setItem('rcs.sidebar.collapsed', String(collapsed)); } catch (e) { }
+    if (global.Guide && Guide.isActive()) Guide.refresh();
+    if (global.FlowGuide && FlowGuide.isActive()) FlowGuide.refresh();
+  }
+
   function navTipEl() {
     var tip = document.getElementById('nav-capability-tip');
     if (!tip) {
@@ -93,13 +107,14 @@
         var navBtn = h('button', {
           class: 'nav-item' + (it.key === activeTop ? ' active' : ''),
           dataset: { guide: 'nav-' + it.key },
+          'aria-label': it.label,
           'aria-describedby': 'nav-capability-tip',
           onclick: function () { hideNavTip(); UI.goto('/' + it.key); },
           onmouseenter: function () { showNavTip(it, navBtn); },
           onmouseleave: function () { hideNavTip(navBtn); },
           onfocus: function () { showNavTip(it, navBtn); },
           onblur: function () { hideNavTip(navBtn); }
-        }, [h('span', { class: 'nav-idx' }, it.idx), h('span', null, it.label), badge]);
+        }, [h('span', { class: 'nav-idx', 'aria-hidden': 'true' }, it.idx), h('span', { class: 'nav-label' }, it.label), badge]);
         return navBtn;
       }))));
     });
@@ -115,6 +130,7 @@
       box.appendChild(i === crumbs.length - 1 ? h('b', null, c) : h('span', null, c));
     });
     document.getElementById('sim-date').textContent = Store.get().simToday;
+    document.querySelector('.sidebar-foot').title = '系统业务日：' + Store.get().simToday;
   }
 
   function render() {
@@ -127,7 +143,7 @@
       view.appendChild(h('button', { class: 'btn btn-primary', onclick: function () { UI.goto('/dashboard'); } }, '返回大盘'));
       return;
     }
-    document.title = def.title + ' · 零售信贷资金方计费结算系统';
+    document.title = def.title + ' · 信贷资方结算系统';
     try {
       def.render(view, current.params);
     } catch (err) {
@@ -154,9 +170,17 @@
 
   /* ---------------- 启动 ---------------- */
   function boot() {
-    var savedTheme = null, savedRole = null;
-    try { savedTheme = localStorage.getItem('rcs.theme'); savedRole = localStorage.getItem('rcs.role'); } catch (e) { }
+    var savedTheme = null, savedRole = null, savedSidebarCollapsed = false;
+    try {
+      savedTheme = localStorage.getItem('rcs.theme');
+      savedRole = localStorage.getItem('rcs.role');
+      savedSidebarCollapsed = localStorage.getItem('rcs.sidebar.collapsed') === 'true';
+    } catch (e) { }
     applyTheme(savedTheme || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+    setSidebarCollapsed(savedSidebarCollapsed);
+    document.getElementById('btn-sidebar-toggle').addEventListener('click', function () {
+      setSidebarCollapsed(!document.getElementById('app-shell').classList.contains('sidebar-collapsed'));
+    });
 
     Store.init();
     if (savedRole) Store.get().role = savedRole;
@@ -201,7 +225,7 @@
     if (global.Guide) Guide.init();
     if (global.FlowGuide) FlowGuide.init();
 
-    console.log('%c 零售信贷资金方计费结算系统 · 模拟原型 ',
+    console.log('%c 信贷资方结算系统 · 模拟原型 ',
       'background:#2563eb;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold');
     var S = Store.get();
     console.log('事件 %d 条 / 费用流水 %d 条 / 基数快照 %d 条 / 账单 %d 张 / 结算单 %d 张',
