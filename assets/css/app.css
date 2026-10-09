@@ -1,5 +1,5 @@
 /* ==========================================================================
-   零售信贷资金方计费结算系统 · 设计系统
+   信贷资方结算系统 · 设计系统
    零依赖，单文件样式表。支持明/暗主题。
    ========================================================================== */
 
@@ -147,11 +147,30 @@ button { font-family: inherit; }
 .sim-clock { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
 .sim-clock .lbl { font-size: 10.5px; color: #6c7891; }
 .sim-clock strong { font-family: var(--font-mono); font-size: 12.5px; color: #fff; }
+.reset-icon { display: none; }
+
+/* 收起后保留图标导航、异常数量和能力浮窗。 */
+.sidebar-collapsed { --sidebar-w: 64px; }
+.sidebar-collapsed #sidebar > .brand { justify-content: center; padding: 16px 0 14px; }
+.sidebar-collapsed .brand-text,
+.sidebar-collapsed .nav-label,
+.sidebar-collapsed .nav-group-title,
+.sidebar-collapsed .sim-clock,
+.sidebar-collapsed .reset-label { display: none; }
+.sidebar-collapsed #nav { padding: 4px 8px 16px; }
+.sidebar-collapsed .nav-group { margin-top: 10px; }
+.sidebar-collapsed .nav-group + .nav-group { padding-top: 10px; border-top: 1px solid rgba(255,255,255,.07); }
+.sidebar-collapsed .nav-item { position: relative; justify-content: center; min-height: 36px; padding: 8px; }
+.sidebar-collapsed .nav-idx { width: 24px; height: 24px; flex-basis: 24px; font-size: 12px; }
+.sidebar-collapsed .nav-badge { position: absolute; right: 0; top: 0; min-width: 14px; padding: 0 3px; text-align: center; }
+.sidebar-collapsed .sidebar-foot { padding: 10px 8px 14px; text-align: center; }
+.sidebar-collapsed #btn-reset { width: 32px; height: 32px; padding: 0; }
+.sidebar-collapsed .reset-icon { display: inline; font-size: 20px; }
 
 #main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 #topbar {
-  height: 48px; flex: 0 0 48px; background: var(--bg-elev); border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between; padding: 0 18px;
+  min-height: 48px; flex: 0 0 auto; background: var(--bg-elev); border-bottom: 1px solid var(--border);
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; padding: 8px 18px;
   position: sticky; top: 0; z-index: 20;
 }
 #guide-top-controls {
@@ -160,10 +179,13 @@ button { font-family: inherit; }
 }
 #guide-top-controls[hidden] { display: none; }
 #guide-top-controls .guide-top-nav { position: static; transform: none; }
-.crumbs { font-size: 12.5px; color: var(--fg-muted); display: flex; gap: 6px; align-items: center; }
+.topbar-left { display: flex; align-items: center; gap: 10px; min-width: 28px; flex: 0 1 auto; }
+.sidebar-toggle { flex: 0 0 28px; font-size: 23px; line-height: 1; }
+.sidebar-toggle:focus-visible, .nav-item:focus-visible { outline: 2px solid var(--sidebar-active); outline-offset: 2px; }
+.crumbs { font-size: 12.5px; color: var(--fg-muted); display: flex; gap: 6px; align-items: center; white-space: nowrap; }
 .crumbs b { color: var(--fg); font-weight: 600; }
 .crumbs .sep { color: var(--fg-faint); }
-.topbar-right { display: flex; align-items: center; gap: 12px; }
+.topbar-right { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-left: auto; }
 .role-picker { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--fg-muted); white-space: nowrap; }
 .role-picker select { width: auto; min-width: 130px; }
 .icon-btn {
