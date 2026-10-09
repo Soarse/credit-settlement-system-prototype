@@ -27,6 +27,25 @@ function check(name, condition, facts) {
   if (!condition) failures.push(name);
 }
 
+// The published standalone editor must contain every view and match its local source.
+{
+  const editor = fs.readFileSync(path.join(app, 'flow-editor.html'), 'utf8');
+  const sourcePath = path.join(app, '..', 'BP-03_月末出账与结算_可编辑页面.html');
+  const dataMatch = editor.match(/<script id="editor-data" type="application\/json">([\s\S]*?)<\/script>/);
+  const data = JSON.parse(dataMatch[1]);
+  const executableScripts = [...editor.matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)]
+    .filter((match) => !match[1].includes('application/json'));
+  executableScripts.forEach((match, i) => new vm.Script(match[2], { filename: `flow-editor-inline-${i}.js` }));
+  const matchesSource = !fs.existsSync(sourcePath) || editor === fs.readFileSync(sourcePath, 'utf8');
+  const catalogCodes = new Set(data.catalog.map((flow) => flow.code));
+  check('publishedFlowEditor', matchesSource && data.catalog.length === 17 && data.flows.length === 30 &&
+      data.flows.every((flow) => catalogCodes.has(flow.catalogCode) && flow.nodes.length > 0) &&
+      executableScripts.length > 0,
+    { matchesLocalSource: matchesSource, catalogFlows: data.catalog.length, views: data.flows.length,
+      nodes: data.flows.reduce((total, flow) => total + flow.nodes.length, 0),
+      syntaxCheckedScripts: executableScripts.length });
+}
+
 // The selectable process guide contains all 30 documented flows plus combined journeys.
 {
   const standard = FlowGuide.flows.filter((flow) => /^\d{2}$/.test(flow.id));
@@ -58,13 +77,17 @@ function check(name, condition, facts) {
 // The versioned design document stays aligned with the process catalog shown in the prototype.
 {
   const designDoc = fs.readFileSync(path.join(app, 'docs', '信贷资方结算系统_30个流程与模块关系说明.md'), 'utf8');
+  const rootDesignDoc = fs.readFileSync(path.join(app, '..', '信贷资方结算系统_30个流程与模块关系说明.md'), 'utf8');
   const improvements = fs.readFileSync(path.join(app, 'IMPROVEMENTS.md'), 'utf8');
   const documentedCategories = FlowGuide.categories.every((category) =>
     designDoc.includes(category.name) && improvements.includes(category.name));
   const documentedFlows = FlowGuide.flows.every((flow) => designDoc.includes(flow.id) && designDoc.includes(flow.title));
   check('processGuideDocumentationSync', documentedCategories && documentedFlows &&
-      designDoc.includes('30 个标准业务流程') && designDoc.includes('2 个综合演练'),
-    { designDocument: 'docs/信贷资方结算系统_30个流程与模块关系说明.md',
+      designDoc.includes('30 个标准业务流程') && designDoc.includes('2 个综合演练') &&
+      rootDesignDoc === designDoc,
+    { designDocuments: ['../信贷资方结算系统_30个流程与模块关系说明.md',
+        'docs/信贷资方结算系统_30个流程与模块关系说明.md'],
+      rootAndNestedDocumentsMatch: rootDesignDoc === designDoc,
       documentedCategoryCount: FlowGuide.categories.length, documentedFlowCount: FlowGuide.flows.length });
 }
 
@@ -83,6 +106,21 @@ function check(name, condition, facts) {
     !flowGuideSource.includes("onclick: backToCatalog }, '← 流程目录'") &&
       !flowGuideSource.includes("onclick: backToCatalog }, '流程目录'"),
     { removedControl: '流程目录' });
+}
+// The local launcher opens this exact copy and avoids unrelated services already using port 8081.
+{
+  const serverSource = fs.readFileSync(path.join(app, 'server.cjs'), 'utf8');
+  const launcherSource = fs.readFileSync(path.join(app, 'start-prototype.ps1'), 'utf8');
+  const batchSource = fs.readFileSync(path.join(app, '启动原型.cmd'), 'utf8');
+  const readmeSource = fs.readFileSync(path.join(app, 'README.md'), 'utf8');
+  check('reliableLocalLauncher',
+    serverSource.includes("pathname === '/__health'") &&
+      serverSource.includes("startsWith('--port=')") &&
+      launcherSource.includes('8081..8090') &&
+      launcherSource.includes('$healthRoot -eq $projectRoot') &&
+      batchSource.includes('start-prototype.ps1') &&
+      readmeSource.includes('8082—8090'),
+    { healthCheck: true, projectRootVerification: true, fallbackPorts: '8081-8090' });
 }
 function eqOf(run, id) {
   return run.levels.flatMap((level) => level.eqs).find((eq) => eq.id === id);
