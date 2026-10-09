@@ -11,7 +11,7 @@
 
   var steps = [
     {
-      phase: '开始', title: '欢迎使用资金方计费结算系统', route: '/dashboard?period=2026-04', target: '#btn-guide',
+      phase: '开始', title: '欢迎使用信贷资方结算系统', route: '/dashboard?period=2026-04', target: '#btn-guide',
       business: '这套系统管理资金方从准入、协议计费、账单确认、资金结算到对账审计的完整链路。目标是让每一分钱都能追溯到协议规则和原始业务事件。',
       operation: '引导会自动切换页面。使用“下一步 / 上一步”学习，按 Esc 或再次点击右上角“新手引导”可随时退出；下次开启会从退出位置继续。',
       checkpoint: '先建立全局认知：配置决定计费，计费形成账单，账单确认后才能结算，结算后必须以回单和勾稽闭环。'
