@@ -11,7 +11,7 @@
 
 项目根目录的独立流程编辑器 `BP-03_月末出账与结算_可编辑页面.html` 在收起选项后，顶部中央仍可选择业务／应用流程、具体流程及主流程／拆分闭环，覆盖 17 个原 PPT 流程、30 个可编辑视图；保留原 38 像素工具栏高度。
 
-仓库已于 2026-10-09 设为私有，代码和设计文档仅向仓库所有者及获授权协作者开放。当前账户方案不支持私有仓库的 GitHub Pages，原[系统地址](https://soarse.github.io/credit-settlement-system-prototype/)和[流程编辑器地址](https://soarse.github.io/credit-settlement-system-prototype/flow-editor.html)已停用，返回 404。仍可按下方说明启动本地原型，或直接打开 `flow-editor.html` 离线使用。
+仓库已于 2026-10-10 恢复公开，代码和设计文档可公开查看。GitHub Pages 从 `main` 分支根目录发布：[系统地址](https://soarse.github.io/credit-settlement-system-prototype/)和[流程编辑器地址](https://soarse.github.io/credit-settlement-system-prototype/flow-editor.html)。也可按下方说明启动本地原型，或直接打开 `flow-editor.html` 离线使用。
 
 `flow-editor.html` 是上述独立编辑器的完整发布副本，保留离线编辑、缩放、冻结泳道标题、选项与说明折叠、顶部流程选择以及保存 HTML。发布前同步原页面与该副本，并运行 `node review-checks.cjs`；页面、原型脚本和对应设计文档一起发布。业务原型数据仍在浏览器内存中，编辑器修改仍按原机制暂存于当前浏览器，不会自动回写 GitHub。
 
